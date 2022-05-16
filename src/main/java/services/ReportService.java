@@ -30,8 +30,8 @@ public class ReportService extends ServiceBase {
         return count;
     }
 
-    public List<ReportView> getAllPage(int page){
-        List<Report> reports = em.createNamedQuery(JpaConst.Q_REP_GET_ALL_MINE, Report.class)
+    public List<ReportView> getAllPerPage(int page){
+        List<Report> reports = em.createNamedQuery(JpaConst.Q_REP_GET_ALL, Report.class)
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page -1 ))
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
                 .getResultList();

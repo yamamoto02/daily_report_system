@@ -145,14 +145,12 @@ public class EmployeeAction extends ActionBase{
         if(checkAdmin()) {
           //idを条件に従業員データを取得する
             EmployeeView ev = service.findOne(toNumber(getRequestParam(AttributeConst.EMP_ID)));
-            System.out.println("1");
             if(ev == null || ev.getDeleteFlag() == AttributeConst.DEL_FLAG_TRUE.getIntegerValue()) {
 
                 //データが取得できなかった、または論理削除されている場合はエラー画面を表示
                 forward(ForwardConst.FW_ERR_UNKNOWN);
                 return;
             }
-            System.out.println("2");
             putRequestScope(AttributeConst.EMPLOYEE, ev);
 
             //詳細画面を表示
