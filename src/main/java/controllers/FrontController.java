@@ -30,7 +30,6 @@ public class FrontController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("1");
         //パラメータに該当するActionクラスのインスタンス
         ActionBase action = getAction(request, response);
 
