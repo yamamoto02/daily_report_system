@@ -114,4 +114,53 @@ public class ReportAction extends ActionBase {
             forward(ForwardConst.FW_REP_SHOW);
         }
     }
+
+    public void edit() throws ServletException, IOException{
+        ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+        EmployeeView ev = (EmployeeView)getSessionScope(AttributeConst.LOGIN_EMP);
+
+        if(rv==null || ev.getId() != rv.getEmployee().getId()) {
+            forward(ForwardConst.FW_ERR_UNKNOWN);
+        } else {
+            putRequestScope(AttributeConst.TOKEN, getTokenId());
+            putRequestScope(AttributeConst.REPORT, rv);
+
+            forward(ForwardConst.FW_REP_EDIT);
+        }
+    }
+
+    public void update() throws ServletException, IOException{
+
+        if(checkToken()) {
+
+            ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+            rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
+            rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
+            rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
+
+            List<String> errors = service.update(rv);
+
+            if (errors.size() > 0) {
+                //登録中にエラーがあった場合
+
+                putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
+                putRequestScope(AttributeConst.REPORT, rv); //入力された従業員情報
+                putRequestScope(AttributeConst.ERR, errors); //エラーのリスト
+
+                //新規登録画面を再表示
+                forward(ForwardConst.FW_REP_EDIT);
+
+            } else {
+                //登録中にエラーがなかった場合
+
+                //セッションに登録完了のフラッシュメッセージを設定
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+
+                //一覧画面にリダイレクト
+                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+            }
+        }
+    }
 }
